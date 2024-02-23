@@ -6,13 +6,13 @@ import Enum.*;
 import java.util.*;
 
 public class TaskManager {
-    private int Id = 0;
+    private int id = 0;
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
 
     private int generateId() {
-        return Id++;
+        return id++;
     }
 
     //Методы Task
