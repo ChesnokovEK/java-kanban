@@ -1,4 +1,4 @@
-package Manager;
+package Tasks;
 
 import Tasks.*;
 import Enum.*;
@@ -25,20 +25,16 @@ public class TaskManager {
         return tasks.values();
     }
 
-    public void updateTask(Task task) {
+    public void updateTask(Task task, State state) {
         if (task != null && tasks.containsKey(task.getId())) {
-            updateTaskState(task, task.getState());
+            task.setState(state);
             tasks.put(task.getId(), task);
         }
     }
 
-    private void updateTaskState(Task task, State state) {
-        task.setState(state);
-    }
-
     public void deleteTaskById(int taskId) {
         if (tasks.containsKey(taskId)) {
-            deleteTask(taskId);
+            tasks.remove(taskId);
             return;
         }
 
@@ -54,11 +50,7 @@ public class TaskManager {
 
         System.out.println("Задачи с таким id не существует");
     }
-
-    private void deleteTask(int taskId) {
-        tasks.remove(taskId);
-    }
-
+    
     public void deleteAllTasks() {
         tasks.clear();
     }
@@ -83,7 +75,7 @@ public class TaskManager {
         return subTasks.values();
     }
 
-    public void updateSubTask(SubTask subTask) {
+    public void updateSubTask(SubTask subTask, State state) {
         Epic epic = epics.get(subTask.getRelatedEpicId());
 
         if (epic == null) {
@@ -100,14 +92,9 @@ public class TaskManager {
         }
 
         epic.addRelatedSubTask(subTask);
-        updateSubTaskState(subTask, subTask.getState());
-
-        subTasks.put(subTask.getId(), subTask);
-    }
-
-    private void updateSubTaskState(SubTask subTask, State state){
         subTask.setState(state);
-        updateEpicState(epics.get(subTask.getRelatedEpicId()));
+        updateEpic(epic);
+        subTasks.put(subTask.getId(), subTask);
     }
 
     private void deleteSubTask(SubTask subTask){
@@ -144,36 +131,28 @@ public class TaskManager {
             uniqueStates.add(subTask.getState());
         }
 
-        State[] stateArray = new State[uniqueStates.size()];
-        stateArray = uniqueStates.toArray(stateArray);
-
-        if (stateArray.length > 1) {
+        if (uniqueStates.size() > 1) {
             epic.setState(State.IN_PROGRESS);
             return;
         }
 
-        epic.setState(stateArray[0]);
+        for (State state : uniqueStates) {
+            epic.setState(state);
+        }
     }
 
     //т.к подзадачи не могут существовать отдельно от эпиков(?) из подзадач эпиков делаем обычные задачи
     private void deleteEpic(Epic epic) {
         for (SubTask subTask : epic.getAllRelatedSubTasks()) {
-            moveSubTaskToTask(subTask);
+            convertSubTaskToTask(subTask);
         }
         epics.remove(epic.getId());
     }
 
-
-
     public void deleteAllSubTasks() {
         for (Epic epic : getAllEpics()) {
-            for (int i = 0; i < epic.getRelatedSubTaskId().size(); i++) {
-                epic.removeRelatedSubTask(i);
-            }
-            epic.setRelatedSubTaskIds(new ArrayList<>());
-            updateEpic(epic);
+            epic.clear();
         }
-
         subTasks.clear();
     }
 
@@ -182,13 +161,13 @@ public class TaskManager {
         for (int epicId : epics.keySet()) {
             Epic epic =  epics.get(epicId);
             for (SubTask subTask : epic.getAllRelatedSubTasks()) {
-                moveSubTaskToTask(subTask);
+                convertSubTaskToTask(subTask);
             }
         }
         epics.clear();
     }
 
-    private void moveSubTaskToTask(SubTask subTask) {
+    private void convertSubTaskToTask(SubTask subTask) {
         tasks.put(
                 subTask.getId(),
                 new Task(

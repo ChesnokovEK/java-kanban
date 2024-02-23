@@ -5,7 +5,7 @@ import Enum.*;
 
 public class Epic extends AbstractTask {
     private ArrayList<Integer> relatedSubTaskIds = new ArrayList<>();
-    private final ArrayList<SubTask> relatedSubTasks = new ArrayList<>();
+    private ArrayList<SubTask> relatedSubTasks = new ArrayList<>();
 
     public Epic(int id, String title, String description, State state) {
         super(id, title, description, state);
@@ -42,8 +42,17 @@ public class Epic extends AbstractTask {
         return relatedSubTasks;
     }
 
-    public void setRelatedSubTaskIds(ArrayList<Integer> relatedSubTaskIds) {
+    protected void setRelatedSubTaskIds(ArrayList<Integer> relatedSubTaskIds) {
         this.relatedSubTaskIds = relatedSubTaskIds;
+    }
+    protected void setRelatedSubTasks(ArrayList<SubTask> relatedSubTasks) {
+        this.relatedSubTasks = relatedSubTasks;
+    }
+
+    protected void clear(){
+        this.relatedSubTaskIds = new ArrayList<>();
+        this.relatedSubTasks = new ArrayList<>();
+        this.state = State.NEW;
     }
 
     @Override

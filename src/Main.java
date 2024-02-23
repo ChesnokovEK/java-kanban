@@ -1,4 +1,4 @@
-import Manager.TaskManager;
+import Tasks.TaskManager;
 import Tasks.*;
 import Enum.*;
 
@@ -35,16 +35,11 @@ public class Main {
         );
 
         //Из ТЗ - Изменить статусы созданных объектов
-        task1.setState(State.DONE);
-        task2.setState(State.IN_PROGRESS);
-        subTask1.setState(State.DONE);
-        subTask2.setState(State.IN_PROGRESS);
-        subTask3.setState(State.DONE);
-        manager.updateTask(task1);
-        manager.updateTask(task2);
-        manager.updateSubTask(subTask1);
-        manager.updateSubTask(subTask2);
-        manager.updateSubTask(subTask3);
+        manager.updateTask(task1, State.DONE);
+        manager.updateTask(task2, State.IN_PROGRESS);
+        manager.updateSubTask(subTask1, State.DONE);
+        manager.updateSubTask(subTask2, State.IN_PROGRESS);
+        manager.updateSubTask(subTask3, State.DONE);
 
         //Из ТЗ - распечатать измененные объекты
         System.out.println(
@@ -57,6 +52,7 @@ public class Main {
         //Из ТЗ - удалить одну из задач и один из эпиков
         manager.deleteTaskById(task2.getId());
         manager.deleteTaskById(epic2.getId());
+
 
         System.out.println(
             "Задачи после удаления:" + System.lineSeparator()

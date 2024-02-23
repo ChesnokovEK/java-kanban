@@ -26,7 +26,7 @@ public class SubTask extends AbstractTask {
         return relatedEpicId;
     }
 
-    public void setRelatedEpicId(int relatedEpicId) {
+    protected void setRelatedEpicId(int relatedEpicId) {
         this.relatedEpicId = relatedEpicId;
     }
 

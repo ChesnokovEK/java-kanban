@@ -54,7 +54,7 @@ public abstract class AbstractTask {
         return state;
     }
 
-    public void setState(State state) {
+    protected void setState(State state) {
         this.state = state;
     }
 
