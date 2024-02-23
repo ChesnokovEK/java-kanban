@@ -2,47 +2,27 @@ package Tasks;
 
 import Enum.*;
 
-public class Task {
-    private String name;
-    private String description;
-    private int id;
-    private State state;
-
-    public Task(String name, String description, State state) {
-        this.name = name;
-        this.description = description;
-        this.state = state;
+public class Task extends AbstractTask {
+    public Task(int id, String title, String description, State state) {
+        super(id, title, description, state);
     }
 
-    public String getName() {
-        return name;
+    public Task(String title, String description, State state) {
+        super(title, description, state);
     }
 
-    public String getDescription() {
-        return description;
+    public Task(String title, String description) {
+        super(title, description);
+        this.state = State.NEW;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public State getStatus() {
-        return state;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setStatus(State state) {
-        this.state = state;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "\nTask {\n"
+                + "\tid='" + id + "'"
+                + "\n\ttitle='" + title + "'"
+                + ", \n\tdescription='" + description + "'"
+                + ", \n\tstate='" + state + "'"
+                + "\n}";
     }
 }
