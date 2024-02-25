@@ -1,68 +1,95 @@
 package Tasks;
 
-import java.util.ArrayList;
+import java.util.*;
 import Enum.*;
 
 public class Epic extends AbstractTask {
-    private ArrayList<Integer> relatedSubTaskIds = new ArrayList<>();
-    private ArrayList<SubTask> relatedSubTasks = new ArrayList<>();
+    private Map<Integer, SubTask> relatedSubTasks = new HashMap<>();
 
-    public Epic(int id, String title, String description, State state) {
-        super(id, title, description, state);
+    public Epic(Epic epic, Collection<SubTask> taskCollection) {
+        super(epic.getId(), epic.getTitle(), epic.getDescription());
+
+        for (SubTask subTask : taskCollection) {
+            addRelatedSubTask(subTask);
+        }
+
+        setState();
     }
 
-    public Epic(String title, String description, State state) {
-        super(title, description, state);
+    public Epic(Epic epic) {
+        super(epic.getId(), epic.getTitle(), epic.getDescription());
+
+        for (SubTask subTask : epic.getAllRelatedSubTasks()) {
+            addRelatedSubTask(subTask);
+        }
+
+        setState();
     }
+
     public Epic(String title, String description) {
         super(title, description);
-        this.state = State.NEW;
-    }
-
-    public void addRelatedSubTaskId(int subTaskId) {
-        relatedSubTaskIds.add(subTaskId);
     }
 
     public void addRelatedSubTask(SubTask subTask) {
-        relatedSubTasks.add(subTask);
+        relatedSubTasks.put(subTask.getId(), new SubTask(subTask));
+        calculateState(getAllRelatedSubTasks());
     }
 
-    public void removeRelatedSubTaskId(int subTaskId) {
-        relatedSubTaskIds.remove(subTaskId);
-    }
-
-    public void removeRelatedSubTask(int subTaskId) {
+    public void removeRelatedSubTaskById(int subTaskId) {
         relatedSubTasks.remove(subTaskId);
     }
-    public ArrayList<Integer> getRelatedSubTaskId() {
-        return relatedSubTaskIds;
+
+    public Collection<SubTask> getAllRelatedSubTasks() {
+        return relatedSubTasks.values();
     }
 
-    public ArrayList<SubTask> getAllRelatedSubTasks() {
-        return relatedSubTasks;
-    }
-
-    protected void setRelatedSubTaskIds(ArrayList<Integer> relatedSubTaskIds) {
-        this.relatedSubTaskIds = relatedSubTaskIds;
-    }
-    protected void setRelatedSubTasks(ArrayList<SubTask> relatedSubTasks) {
-        this.relatedSubTasks = relatedSubTasks;
-    }
-
-    protected void clear(){
-        this.relatedSubTaskIds = new ArrayList<>();
-        this.relatedSubTasks = new ArrayList<>();
-        this.state = State.NEW;
+    public void removeAllRelatedSubTasks() {
+        relatedSubTasks.clear();
+        setState();
     }
 
     @Override
     public String toString() {
+        List<Integer> subTasksId = new ArrayList<>();
+
+        for (SubTask subTask : getAllRelatedSubTasks()) {
+            subTasksId.add(subTask.getId());
+        }
+
         return "\nEpic {\n"
-                + "\tid='" + id + "'"
-                + "\n\ttitle='" + title + "'"
-                + ", \n\tdescription='" + description + "'"
-                + ", \n\tstate='" + state + "'"
-                + ", \n\trelatedSubTaskIds=" + relatedSubTaskIds
+                + "\tid='" + getId() + "'"
+                + "\n\ttitle='" + getTitle() + "'"
+                + ", \n\tdescription='" + getDescription() + "'"
+                + ", \n\tstate='" + getState() + "'"
+                + ", \n\trelatedSubTasksId=" + subTasksId
                 + "\n}";
+    }
+
+    protected void setRelatedSubTasks(Map<Integer, SubTask> relatedSubTasks) {
+        this.relatedSubTasks = relatedSubTasks;
+    }
+
+    protected void setState() {
+        calculateState(getAllRelatedSubTasks());
+    }
+
+    private void calculateState(Collection<SubTask> relatedSubTasks) {
+        if (relatedSubTasks.size() == 0) {
+            setState(State.NEW);
+            return;
+        }
+
+        List<State> statesOfSubTasks = new ArrayList<>();
+
+        for (SubTask subTask : relatedSubTasks) {
+            statesOfSubTasks.add(subTask.getState());
+        }
+
+        if (statesOfSubTasks.stream().distinct().toList().size() > 1) {
+            setState(State.IN_PROGRESS);
+            return;
+        }
+
+        setState(statesOfSubTasks.stream().distinct().toList().get(0));
     }
 }

@@ -3,26 +3,23 @@ package Tasks;
 import Enum.*;
 
 public class Task extends AbstractTask {
-    public Task(int id, String title, String description, State state) {
-        super(id, title, description, state);
-    }
 
-    public Task(String title, String description, State state) {
-        super(title, description, state);
+    public Task(Task task) {
+        super(task.getId(), task.getTitle(), task.getDescription(), task.getState());
     }
 
     public Task(String title, String description) {
         super(title, description);
-        this.state = State.NEW;
+        setState(State.NEW);
     }
 
     @Override
     public String toString() {
         return "\nTask {\n"
-                + "\tid='" + id + "'"
-                + "\n\ttitle='" + title + "'"
-                + ", \n\tdescription='" + description + "'"
-                + ", \n\tstate='" + state + "'"
+                + "\tid='" + getId() + "'"
+                + "\n\ttitle='" + getTitle() + "'"
+                + ", \n\tdescription='" + getDescription() + "'"
+                + ", \n\tstate='" + getState() + "'"
                 + "\n}";
     }
 }

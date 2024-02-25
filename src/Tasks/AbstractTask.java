@@ -3,16 +3,22 @@ package Tasks;
 import Enum.*;
 
 public abstract class AbstractTask {
-    public int id;
-    public String title;
-    public String description;
-    public State state;
+    private int id;
+    private String title;
+    private String description;
+    private State state;
 
     public AbstractTask(int id, String title, String description, State state) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.state = state;
+    }
+
+    public AbstractTask(int id, String title, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
     }
 
     public AbstractTask(String title, String description, State state) {
@@ -54,7 +60,7 @@ public abstract class AbstractTask {
         return state;
     }
 
-    protected void setState(State state) {
+    public void setState(State state) {
         this.state = state;
     }
 

@@ -5,22 +5,16 @@ import Enum.*;
 public class SubTask extends AbstractTask {
     private int relatedEpicId;
 
-    public SubTask(int id, String title, String description, State state, int relatedEpicId) {
-        super(id, title, description, state);
-        this.relatedEpicId = relatedEpicId;
-    }
-
-    public SubTask(String title, String description, State state, int relatedEpicId) {
-        super(title, description, state);
-        this.relatedEpicId = relatedEpicId;
+    public SubTask(SubTask subTask) {
+        super(subTask.getId(), subTask.getTitle(), subTask.getDescription(), subTask.getState());
+        this.relatedEpicId = subTask.getRelatedEpicId();
     }
 
     public SubTask(String title, String description, int relatedEpicId) {
         super(title, description);
-        this.relatedEpicId = relatedEpicId;
-        this.state = State.NEW;
+        setRelatedEpicId(relatedEpicId);
+        setState(State.NEW);
     }
-
 
     public int getRelatedEpicId() {
         return relatedEpicId;
