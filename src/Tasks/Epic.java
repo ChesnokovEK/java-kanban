@@ -6,16 +6,6 @@ import Enum.*;
 public class Epic extends AbstractTask {
     private Map<Integer, SubTask> relatedSubTasks = new HashMap<>();
 
-    public Epic(Epic epic, Collection<SubTask> taskCollection) {
-        super(epic.getId(), epic.getTitle(), epic.getDescription());
-
-        for (SubTask subTask : taskCollection) {
-            addRelatedSubTask(subTask);
-        }
-
-        setState();
-    }
-
     public Epic(Epic epic) {
         super(epic.getId(), epic.getTitle(), epic.getDescription());
 
@@ -32,11 +22,12 @@ public class Epic extends AbstractTask {
 
     public void addRelatedSubTask(SubTask subTask) {
         relatedSubTasks.put(subTask.getId(), new SubTask(subTask));
-        calculateState(getAllRelatedSubTasks());
+        setState();
     }
 
     public void removeRelatedSubTaskById(int subTaskId) {
         relatedSubTasks.remove(subTaskId);
+        setState();
     }
 
     public Collection<SubTask> getAllRelatedSubTasks() {
@@ -74,7 +65,7 @@ public class Epic extends AbstractTask {
     }
 
     private void calculateState(Collection<SubTask> relatedSubTasks) {
-        if (relatedSubTasks.size() == 0) {
+        if (relatedSubTasks.isEmpty()) {
             setState(State.NEW);
             return;
         }

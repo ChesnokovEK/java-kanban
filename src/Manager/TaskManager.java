@@ -56,11 +56,13 @@ public class TaskManager {
 
     public void addSubTask(SubTask subTask) {
         Epic epic = epics.get(subTask.getRelatedEpicId());
+        SubTask task = new SubTask(subTask);
 
         if (epic != null) {
-            subTask.setId(generateId());
-            subTasks.put(subTask.getId(), new SubTask(subTask));
-            epic.addRelatedSubTask(new SubTask (subTask));
+            task.setId(generateId());
+            subTask.setId(task.getId());
+            subTasks.put(task.getId(), task);
+            epic.addRelatedSubTask(task);
             return;
         }
 
@@ -80,17 +82,19 @@ public class TaskManager {
     }
 
     public void updateSubTask(SubTask subTask) {
-        if (getEpicById(subTask.getRelatedEpicId()) == null) {
+        SubTask task = new SubTask(subTask);
+
+        if (getEpicById(task.getRelatedEpicId()) == null) {
             System.out.println("Ошибка. Эпик, с указанным в подзадаче id не существует");
             return;
         }
 
-        if (getSubTaskById(subTask.getId()) == null) {
+        if (getSubTaskById(task.getId()) == null) {
             return;
         }
 
-        subTasks.put(subTask.getId(), new SubTask(subTask));
-        getEpicById(subTask.getRelatedEpicId()).addRelatedSubTask(subTask);
+        subTasks.put(task.getId(), task);
+        getEpicById(task.getRelatedEpicId()).addRelatedSubTask(task);
     }
 
     public void removeSubTask(int subTaskId) {
@@ -136,7 +140,7 @@ public class TaskManager {
             return;
         }
 
-        epics.put(epic.getId(), new Epic(epic, epic.getAllRelatedSubTasks()));
+        epics.put(epic.getId(), new Epic(epic));
     }
 
     public void removeEpic(int epicId) {
