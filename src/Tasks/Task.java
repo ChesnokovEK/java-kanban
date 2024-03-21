@@ -13,6 +13,10 @@ public class Task extends AbstractTask {
         setState(State.NEW);
     }
 
+    public Task(int id, String description, String title, State state) {
+        super(id, description, title, state);
+    }
+
     @Override
     public String toString() {
         return "\nTask {\n"
