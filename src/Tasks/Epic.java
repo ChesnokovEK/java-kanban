@@ -18,6 +18,12 @@ public class Epic extends AbstractTask {
 
     public Epic(String title, String description) {
         super(title, description);
+        setState();
+    }
+
+    public Epic(int id, String title, String description) {
+        super(id, title, description);
+        setState();
     }
 
     public void addRelatedSubTask(SubTask subTask) {
@@ -37,6 +43,20 @@ public class Epic extends AbstractTask {
     public void removeAllRelatedSubTasks() {
         relatedSubTasks.clear();
         setState();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(relatedSubTasks, epic.relatedSubTasks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), relatedSubTasks);
     }
 
     @Override

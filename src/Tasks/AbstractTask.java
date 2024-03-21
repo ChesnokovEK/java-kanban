@@ -2,6 +2,8 @@ package Tasks;
 
 import Enum.*;
 
+import java.util.Objects;
+
 public abstract class AbstractTask {
     private int id;
     private String title;
@@ -65,4 +67,20 @@ public abstract class AbstractTask {
     }
 
     public abstract String toString();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractTask task = (AbstractTask) o;
+        return id == task.id
+                && Objects.equals(title, task.title)
+                && Objects.equals(description, task.description)
+                && state == task.state;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, state);
+    }
 }
