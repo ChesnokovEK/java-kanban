@@ -6,27 +6,38 @@ import Tasks.SubTask;
 import Tasks.Task;
 import Enum.*;
 import org.junit.jupiter.api.Test;
+
 import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
-    protected T manager;
-
     public int id = 0;
+    protected T manager;
 
     public int generateId() {
         return id++;
     }
+
     public Task createTask() {
-        return new Task(generateId(),"Title", "Description", State.NEW);
+        return new Task(generateId(), "Title", "Description", State.NEW);
     }
+
     public Epic createEpic() {
         return new Epic(generateId(), "Title", "Description");
     }
+
     public SubTask createSubTask(Epic epic) {
-        SubTask subTask = new SubTask(generateId(),"Title", "Description", epic.getId());
+        SubTask subTask = new SubTask(generateId(), "Title", "Description", epic.getId());
         epic.addRelatedSubTask(subTask);
         return subTask;
+    }
+
+    @Test
+    public void shouldCreateTaskManager() {
+        TaskManager inMemoryTaskManager = Managers.getInMemoryTaskManager();
+        assertNotNull(inMemoryTaskManager.getAllTasks());
+        assertNotNull(inMemoryTaskManager.getHistory());
     }
 
     @Test
@@ -300,5 +311,51 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(2, list.size());
         assertTrue(list.contains(subtask));
         assertTrue(list.contains(epic));
+    }
+
+    @Test
+    public void shouldNotCreateSubTaskIfBadRelatedEpicId() {
+        Epic epic = createEpic();
+        manager.createEpic(epic);
+        SubTask subtask1 = createSubTask(epic);
+        SubTask subtask2 = new SubTask(1, "Title", "Description", 1);
+        manager.createSubTask(subtask1);
+        manager.createSubTask(subtask2);
+        assertEquals(1, manager.getAllSubTasks().size());
+    }
+
+    @Test
+    public void shouldNotChangeTaskFieldsWhenAddToManager() {
+        Task task = createTask();
+        Task taskBefore = (Task) task.clone();
+        manager.createTask(task);
+        manager.getAllTasks();
+        assertEquals(task, taskBefore);
+        assertEquals(taskBefore, manager.getTaskById(taskBefore.getId()));
+        assertEquals(task, manager.getTaskById(task.getId()));
+    }
+
+    @Test
+    public void shouldNotChangeSubTaskFieldsWhenAddToManager() {
+        Epic epic = createEpic();
+        SubTask subTask = createSubTask(epic);
+        SubTask subTaskBefore = (SubTask) subTask.clone();
+        manager.createEpic(epic);
+        manager.createSubTask(subTask);
+        manager.getAllSubTasks();
+        assertEquals(subTask, subTaskBefore);
+        assertEquals(subTaskBefore, manager.getSubTaskById(subTaskBefore.getId()));
+        assertEquals(subTask, manager.getSubTaskById(subTask.getId()));
+    }
+
+    @Test
+    public void shouldNotChangeEpicFieldsWhenAddToManager() {
+        Epic epic = createEpic();
+        Epic epicBefore = (Epic) epic.clone();
+        manager.createEpic(epic);
+        manager.getAllEpics();
+        assertEquals(epic, epicBefore);
+        assertEquals(epicBefore, manager.getEpicById(epicBefore.getId()));
+        assertEquals(epic, manager.getEpicById(epic.getId()));
     }
 }
