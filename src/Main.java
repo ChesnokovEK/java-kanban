@@ -1,15 +1,12 @@
-import Manager.InMemoryTaskManager;
 import Manager.Managers;
 import Manager.TaskManager;
 import Tasks.*;
-import Enum.*;
 
 import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getInMemoryTaskManager(Managers.getDefaultHistory());
+        TaskManager taskManager = Managers.getInMemoryTaskManager();
 
         //Наполнение менеджера задачами
         taskManager.createTask(new Task("Описание-1", "Task-1")); // id 0
@@ -30,7 +27,9 @@ public class Main {
         taskManager.getSubTaskById(4);
         taskManager.getSubTaskById(5);
         taskManager.getSubTaskById(6);
-        taskManager.getTaskById(1);
+        Task task = taskManager.getTaskById(1);
+        task.setTitle("NEW-Title");
+        taskManager.updateTask(task);
         taskManager.getTaskById(0);
         taskManager.getTaskById(1);
 

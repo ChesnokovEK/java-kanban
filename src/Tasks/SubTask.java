@@ -42,7 +42,7 @@ public class SubTask extends AbstractTask {
         return Objects.hash(super.hashCode(), relatedEpicId);
     }
 
-       @Override
+    @Override
     public String toString() {
         return "\nSubTask {\n"
                 + "\tid='" + getId() + "'"

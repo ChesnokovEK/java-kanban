@@ -1,6 +1,7 @@
 package Tasks;
 
 import java.util.*;
+
 import Enum.*;
 
 public class Epic extends AbstractTask {
@@ -67,13 +68,7 @@ public class Epic extends AbstractTask {
             subTasksId.add(subTask.getId());
         }
 
-        return "\nEpic {\n"
-                + "\tid='" + getId() + "'"
-                + "\n\ttitle='" + getTitle() + "'"
-                + ", \n\tdescription='" + getDescription() + "'"
-                + ", \n\tstate='" + getState() + "'"
-                + ", \n\trelatedSubTasksId=" + subTasksId
-                + "\n}";
+        return "\nEpic {\n" + "\tid='" + getId() + "'" + "\n\ttitle='" + getTitle() + "'" + ", \n\tdescription='" + getDescription() + "'" + ", \n\tstate='" + getState() + "'" + ", \n\trelatedSubTasksId=" + subTasksId + "\n}";
     }
 
     protected void setRelatedSubTasks(Map<Integer, SubTask> relatedSubTasks) {

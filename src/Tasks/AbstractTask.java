@@ -4,11 +4,18 @@ import Enum.*;
 
 import java.util.Objects;
 
-public abstract class AbstractTask {
+public abstract class AbstractTask implements Cloneable {
     private int id;
     private String title;
     private String description;
     private State state;
+
+    public AbstractTask(Task task) {
+        this.id = task.getId();
+        this.title = task.getTitle();
+        this.description = task.getDescription();
+        this.state = task.getState();
+    }
 
     public AbstractTask(int id, String title, String description, State state) {
         this.id = id;
@@ -82,5 +89,14 @@ public abstract class AbstractTask {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, description, state);
+    }
+
+    @Override
+    public AbstractTask clone() {
+        try {
+            return (AbstractTask) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

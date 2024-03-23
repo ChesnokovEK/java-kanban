@@ -3,7 +3,6 @@ package Tasks;
 import Enum.*;
 
 public class Task extends AbstractTask {
-
     public Task(Task task) {
         super(task.getId(), task.getTitle(), task.getDescription(), task.getState());
     }

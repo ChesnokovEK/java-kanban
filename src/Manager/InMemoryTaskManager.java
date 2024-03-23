@@ -4,18 +4,15 @@ import Tasks.AbstractTask;
 import Tasks.Epic;
 import Tasks.SubTask;
 import Tasks.Task;
+
 import java.util.*;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
-    private final HistoryManager historyManager;
-
-    public InMemoryTaskManager(HistoryManager historyManager) {
-        this.historyManager = historyManager;
-    }
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     public void createTask(Task task) {
         task.setId(generateId());
@@ -136,7 +133,7 @@ public class InMemoryTaskManager implements TaskManager{
         return epics.get(epicId);
     }
 
-    public Collection<Epic> getAllEpics(){
+    public Collection<Epic> getAllEpics() {
         return epics.values();
     }
 

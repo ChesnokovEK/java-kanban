@@ -6,8 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
-    private final List<AbstractTask> tasksHistory = new LinkedList<>();
+    //из условий ТЗ, история хранится по последним 10 задачам
+    final int HISTORY_LIMIT = 10;
+    private final LinkedList<AbstractTask> tasksHistory = new LinkedList<>();
 
     @Override
     public void add(AbstractTask task) {
@@ -16,13 +17,11 @@ public class InMemoryHistoryManager implements HistoryManager {
             return;
         }
 
-        //из условий ТЗ, история хранится по последним 10 задачам
-        int HISTORY_LIMIT = 10;
-        if (tasksHistory.size() >= HISTORY_LIMIT) {
-            tasksHistory.remove(0);
+        if (tasksHistory.size() == HISTORY_LIMIT) {
+            tasksHistory.removeFirst();
         }
 
-        tasksHistory.add(task);
+        tasksHistory.add(task.clone());
     }
 
     @Override
