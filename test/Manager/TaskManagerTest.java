@@ -358,4 +358,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(epicBefore, manager.getEpicById(epicBefore.getId()));
         assertEquals(epic, manager.getEpicById(epic.getId()));
     }
+
+    @Test
+    public void shouldSavePreviousVersionOfTask() {
+        Task task1 = createTask();
+        Task task2 = (Task) task1.clone();
+
+        manager.createTask(task1);
+        manager.getTaskById(task1.getId());
+        task1.setState(State.IN_PROGRESS);
+        manager.updateTask(task1);
+        manager.getTaskById(task1.getId());
+        assertEquals(List.of(task2, task1), manager.getHistory());
+    }
 }

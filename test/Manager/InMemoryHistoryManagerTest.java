@@ -69,15 +69,4 @@ class InMemoryHistoryManagerTest {
 
         assertEquals(10, manager.getHistory().size());
     }
-
-    @Test
-    public void shouldSavePreviousVersionOfTask() {
-        Task task1 = createTask();
-        Task task2 = (Task) task1.clone();
-
-        manager.add(task1);
-        task1.setState(State.IN_PROGRESS);
-        manager.add(task1);
-        assertEquals(List.of(task2, task1), manager.getHistory());
-    }
 }
