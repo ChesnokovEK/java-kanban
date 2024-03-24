@@ -25,7 +25,10 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Ошибка. Попытка получить задачу с не существующим id");
         }
 
-        historyManager.add(tasks.get(taskId));
+        if (tasks.containsKey(taskId)) {
+            historyManager.add(tasks.get(taskId));
+        }
+
         return tasks.get(taskId);
     }
 
@@ -75,7 +78,10 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Ошибка. Попытка получить подзадачу с не существующим id");
         }
 
-        historyManager.add(subTasks.get(subTaskId));
+        if (subTasks.containsKey(subTaskId)) {
+            historyManager.add(subTasks.get(subTaskId));
+        }
+
         return subTasks.get(subTaskId);
     }
 
@@ -129,7 +135,10 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Ошибка. Попытка получить эпик с не существующим id");
         }
 
-        historyManager.add(epics.get(epicId));
+        if (epics.containsKey(epicId)) {
+            historyManager.add(epics.get(epicId));
+        }
+
         return epics.get(epicId);
     }
 
