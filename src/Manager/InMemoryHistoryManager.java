@@ -8,7 +8,7 @@ import java.util.List;
 public class InMemoryHistoryManager implements HistoryManager {
     //из условий ТЗ, история хранится по последним 10 задачам
     protected final int HISTORY_LIMIT = 10;
-    LinkedList<AbstractTask> tasksHistory = new LinkedList<>();
+    private final LinkedList<AbstractTask> tasksHistory = new LinkedList<>();
 
     @Override
     public void add(AbstractTask task) {
