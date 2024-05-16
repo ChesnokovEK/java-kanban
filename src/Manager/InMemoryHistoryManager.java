@@ -87,31 +87,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 }
 
-//    @Override
-//    public void add(AbstractTask task) {
-//        if (task == null) {
-//            System.out.println("Такой задачи не существует");
-//            return;
-//        }
-//        tasksHistory.remove(task.getId());
-//        tasksHistory.put(task.getId(), task);
-//    }
-//
-//    @Override
-//    public void remove(int id) {
-//        tasksHistory.remove(id);
-//    }
-//
-//    @Override
-//    public List<AbstractTask> getHistory() {
-//        ArrayList<AbstractTask> history = new ArrayList<>();
-//        for (AbstractTask task : tasksHistory.values()) {
-//            history.add(task);
-//        }
-//        return history;
-//    }
-//}
-
 class Node {
     private AbstractTask task;
     private Node previous;
