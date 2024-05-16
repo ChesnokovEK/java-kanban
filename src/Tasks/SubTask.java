@@ -24,6 +24,11 @@ public class SubTask extends AbstractTask {
         setState(State.NEW);
     }
 
+    public SubTask(int id, String title, String description, int relatedEpicId, State state) {
+        super(id, title, description, state);
+        setRelatedEpicId(relatedEpicId);
+    }
+
     public int getRelatedEpicId() {
         return relatedEpicId;
     }
