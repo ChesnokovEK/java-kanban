@@ -1,4 +1,4 @@
-package Manager;
+package manager;
 
 import Tasks.AbstractTask;
 import Tasks.Epic;
