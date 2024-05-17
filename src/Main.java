@@ -1,6 +1,6 @@
 import manager.Managers;
 import manager.TaskManager;
-import Tasks.*;
+import tasks.*;
 
 import java.util.*;
 

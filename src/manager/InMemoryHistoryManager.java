@@ -1,6 +1,6 @@
 package manager;
 
-import Tasks.AbstractTask;
+import tasks.AbstractTask;
 
 import java.util.*;
 

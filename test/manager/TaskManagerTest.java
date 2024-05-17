@@ -1,9 +1,9 @@
 package manager;
 
-import Tasks.AbstractTask;
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
+import tasks.AbstractTask;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 import Enum.*;
 import org.junit.jupiter.api.Test;
 

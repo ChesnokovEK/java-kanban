@@ -1,9 +1,9 @@
 package manager;
 
-import Tasks.AbstractTask;
-import Tasks.Task;
-import Tasks.SubTask;
-import Tasks.Epic;
+import tasks.AbstractTask;
+import tasks.Task;
+import tasks.SubTask;
+import tasks.Epic;
 
 import java.util.*;
 
