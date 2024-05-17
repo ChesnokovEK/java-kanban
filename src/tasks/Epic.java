@@ -2,7 +2,7 @@ package tasks;
 
 import java.util.*;
 
-import Enum.*;
+import enums.*;
 
 public class Epic extends AbstractTask {
     private Map<Integer, SubTask> relatedSubTasks = new LinkedHashMap<>();

@@ -4,7 +4,7 @@ import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-import Enum.*;
+import enums.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

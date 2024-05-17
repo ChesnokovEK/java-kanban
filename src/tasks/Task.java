@@ -1,6 +1,6 @@
 package tasks;
 
-import Enum.*;
+import enums.*;
 
 public class Task extends AbstractTask {
     public Task(Task task) {

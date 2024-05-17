@@ -2,7 +2,7 @@ package manager;
 
 import tasks.AbstractTask;
 import tasks.Task;
-import Enum.*;
+import enums.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
