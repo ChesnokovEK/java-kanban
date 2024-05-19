@@ -1,9 +1,9 @@
-package Manager;
+package manager;
 
-import Tasks.AbstractTask;
-import Tasks.Task;
-import Tasks.SubTask;
-import Tasks.Epic;
+import tasks.AbstractTask;
+import tasks.Task;
+import tasks.SubTask;
+import tasks.Epic;
 
 import java.util.*;
 
@@ -32,13 +32,13 @@ public interface TaskManager {
 
     SubTask getSubTaskById(int id);
 
-    Collection<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    Collection<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
-    Collection<SubTask> getAllSubTasks();
+    List<SubTask> getAllSubTasks();
 
-    Collection<SubTask> getAllSubTasksInEpic(int id);
+    List<SubTask> getAllSubTasksInEpic(int id);
 
     void updateTask(Task task);
 

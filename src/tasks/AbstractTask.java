@@ -1,6 +1,6 @@
-package Tasks;
+package tasks;
 
-import Enum.*;
+import enums.*;
 
 import java.util.Objects;
 

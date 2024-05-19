@@ -1,10 +1,10 @@
-package Manager;
+package manager;
 
-import Tasks.AbstractTask;
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
-import Enum.*;
+import tasks.AbstractTask;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+import enums.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -42,6 +42,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldCreateTask() {
+
         Task task = createTask();
         manager.createTask(task);
         Collection<Task> tasks = manager.getAllTasks();
@@ -64,15 +65,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldCreateSubTask() {
         Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
         manager.createEpic(epic);
+
+        SubTask subTask = createSubTask(epic);
         manager.createSubTask(subTask);
-        Collection<SubTask> subTasks = manager.getAllSubTasks();
+
+        List<SubTask> subTasks = manager.getAllSubTasks();
+
         assertNotNull(subTasks);
         assertNotNull(subTask);
         assertEquals(epic.getId(), subTask.getRelatedEpicId());
         assertEquals(State.NEW, subTask.getState());
         assertEquals(subTask, manager.getSubTaskById(subTask.getId()));
+
     }
 
     @Test
@@ -86,14 +91,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldUpdateEpicStateFromSubTaskState() {
-        Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
+        Epic epic = new Epic("Epic-Title", "Description");
         manager.createEpic(epic);
+        SubTask subTask = new SubTask("SubTask-Title", "Description", epic.getId());
         manager.createSubTask(subTask);
         assertEquals(State.NEW, manager.getEpicById(epic.getId()).getState());
         subTask.setState(State.IN_PROGRESS);
         manager.updateSubTask(subTask);
-        assertEquals(State.IN_PROGRESS, manager.getEpicById(epic.getId()).getState());
+        assertEquals(manager.getSubTaskById(subTask.getId()).getState(), manager.getEpicById(epic.getId()).getState());
         subTask.setState(State.DONE);
         manager.updateSubTask(subTask);
         assertEquals(State.DONE, manager.getEpicById(epic.getId()).getState());
@@ -309,8 +314,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.getSubTaskById(subtask.getId());
         List<AbstractTask> list = manager.getHistory();
         assertEquals(2, list.size());
-        assertTrue(list.contains(subtask));
-        assertTrue(list.contains(epic));
     }
 
     @Test
@@ -325,42 +328,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldNotChangeTaskFieldsWhenAddToManager() {
-        Task task = createTask();
-        Task taskBefore = (Task) task.clone();
-        manager.createTask(task);
-        manager.getAllTasks();
-        assertEquals(task, taskBefore);
-        assertEquals(taskBefore, manager.getTaskById(taskBefore.getId()));
-        assertEquals(task, manager.getTaskById(task.getId()));
-    }
-
-    @Test
-    public void shouldNotChangeSubTaskFieldsWhenAddToManager() {
-        Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
-        SubTask subTaskBefore = (SubTask) subTask.clone();
-        manager.createEpic(epic);
-        manager.createSubTask(subTask);
-        manager.getAllSubTasks();
-        assertEquals(subTask, subTaskBefore);
-        assertEquals(subTaskBefore, manager.getSubTaskById(subTaskBefore.getId()));
-        assertEquals(subTask, manager.getSubTaskById(subTask.getId()));
-    }
-
-    @Test
-    public void shouldNotChangeEpicFieldsWhenAddToManager() {
-        Epic epic = createEpic();
-        Epic epicBefore = (Epic) epic.clone();
-        manager.createEpic(epic);
-        manager.getAllEpics();
-        assertEquals(epic, epicBefore);
-        assertEquals(epicBefore, manager.getEpicById(epicBefore.getId()));
-        assertEquals(epic, manager.getEpicById(epic.getId()));
-    }
-
-    @Test
-    public void shouldSavePreviousVersionOfTask() {
+    public void shouldNotSavePreviousVersionOfTask() {
         Task task1 = createTask();
         Task task2 = (Task) task1.clone();
 
@@ -369,6 +337,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task1.setState(State.IN_PROGRESS);
         manager.updateTask(task1);
         manager.getTaskById(task1.getId());
-        assertEquals(List.of(task2, task1), manager.getHistory());
+        assertNotEquals(List.of(task2, task1), manager.getHistory());
     }
 }

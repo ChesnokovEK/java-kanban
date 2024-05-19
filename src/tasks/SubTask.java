@@ -1,6 +1,6 @@
-package Tasks;
+package tasks;
 
-import Enum.*;
+import enums.*;
 
 import java.util.Objects;
 
@@ -22,6 +22,11 @@ public class SubTask extends AbstractTask {
         super(id, title, description);
         setRelatedEpicId(relatedEpicId);
         setState(State.NEW);
+    }
+
+    public SubTask(int id, String title, String description, int relatedEpicId, State state) {
+        super(id, title, description, state);
+        setRelatedEpicId(relatedEpicId);
     }
 
     public int getRelatedEpicId() {
