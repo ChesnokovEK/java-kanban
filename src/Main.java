@@ -35,7 +35,5 @@ public class Main {
         System.out.println(manager.getAllSubTasks());
         System.out.println("History");
         System.out.println(manager.getHistory());
-
-
     }
 }
