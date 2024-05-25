@@ -20,7 +20,7 @@ class InMemoryHistoryManagerTest {
     }
 
     public Task createTask() {
-        return new Task("Description", "Title");
+        return new Task(generateId(), "Description", "Title", State.NEW);
     }
 
     @BeforeEach
@@ -45,9 +45,9 @@ class InMemoryHistoryManagerTest {
         manager.add(task3);
 
         List<AbstractTask> history = manager.getHistory();
-        assertEquals(List.of(task1), history);
-        assertEquals(List.of(task2), history);
-        assertEquals(List.of(task3), history);
+        assertTrue(history.contains(task1));
+        assertTrue(history.contains(task2));
+        assertTrue(history.contains(task3));
     }
 
     @Test

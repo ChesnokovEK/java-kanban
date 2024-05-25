@@ -9,34 +9,36 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private static File file;
-    private static final String HEADER_CSV_FILE = "id,type,title,status,description,epic\n";
+    private final File file;
+    private static final String HEADER_CSV_FILE = "id,type,title,status,description,epic" + System.lineSeparator();
 
     public FileBackedTasksManager(File fileName) {
         super();
         file = fileName;
     }
 
-    public void loadFromFile(File file) {
+    public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager manager = new FileBackedTasksManager(file);
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             String line = bufferedReader.readLine();
             while (bufferedReader.ready()) {
                 line = bufferedReader.readLine();
-                if (line.equals("")) {
+                if (line.isEmpty()) {
                     break;
                 }
 
                 AbstractTask task = manager.fromString(line);
+                TaskType taskType = manager.getType(task);
 
-                if (task instanceof Epic epic) {
-                    addEpic(epic);
-                } else if (task instanceof SubTask subtask) {
-                    addSubTask(subtask);
-                } else {
-                    addTask((Task) task);
+                switch (taskType) {
+                    case EPIC -> manager.addEpic((Epic) task);
+                    case SUBTASK -> manager.addSubTask((SubTask) task);
+                    case TASK -> manager.addTask((Task) task);
                 }
             }
+            return manager;
+        } catch (FileNotFoundException e) {
+            throw new ManagerSaveException("Файл для чтения не найден.");
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось считать данные из файла.");
         }
@@ -56,18 +58,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             writer.write(HEADER_CSV_FILE);
 
             for (Task task : getAllTasks()) {
-                writer.write(toString(task) + "\n");
+                writer.write(toString(task) + System.lineSeparator());
             }
 
             for (Epic epic : getAllEpics()) {
-                writer.write(toString(epic) + "\n");
+                writer.write(toString(epic) + System.lineSeparator());
             }
 
             for (SubTask subtask : getAllSubTasks()) {
-                writer.write(toString(subtask) + "\n");
+                writer.write(toString(subtask) + System.lineSeparator());
             }
 
-            writer.write("\n");
+            writer.write(System.lineSeparator());
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось сохранить в файл", e);
         }
@@ -91,27 +93,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Сохранение в строку
     private String toString(AbstractTask task) {
-        String[] toJoin = {Integer.toString(task.getId()), getType(task).toString(), task.getTitle(),
-                task.getState().toString(), task.getDescription(), getParentEpicId(task)};
-        return String.join(",", toJoin);
+        return String.format("%d,%s,%s,%s,%s,%s", task.getId(), getType(task).toString(), task.getTitle(),
+                task.getState().toString(), task.getDescription(), getParentEpicId(task));
     }
 
     // Создание из строки
     private AbstractTask fromString(String value) {
         String[] params = value.split(",");
-        if (params[1].equals("EPIC")) {
-            Epic epic = new Epic(Integer.parseInt(params[0]), params[2], params[4]);
-            epic.setState(State.valueOf(params[3].toUpperCase()));
-            return epic;
-        } else if (params[1].equals("SUBTASK")) {
-            SubTask subtask = new SubTask(Integer.parseInt(params[0]), params[2], params[4], Integer.parseInt(params[5]));
-            subtask.setState(State.valueOf(params[3].toUpperCase()));
-            return subtask;
-        } else {
-            Task task = new Task(params[2], params[4]);
-            task.setId(Integer.parseInt(params[0]));
-            task.setState(State.valueOf(params[3].toUpperCase()));
-            return task;
+        switch (params[1]) {
+            case "EPIC" -> {
+                return new Epic(Integer.parseInt(params[0]), params[2], params[4]);
+            }
+            case "SUBTASK" -> {
+                return new SubTask(Integer.parseInt(params[0]),
+                        params[2], params[4], Integer.parseInt(params[5]),
+                        State.valueOf(params[3].toUpperCase()));
+            }
+            default -> {
+                return new Task(Integer.parseInt(params[0]), params[2], params[4], State.valueOf(params[3].toUpperCase()));
+            }
         }
     }
 
@@ -138,7 +138,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void addEpic(Epic epic) {
-        super.createEpic(epic);
+       super.createEpic(epic);
     }
 
     public void addSubTask(SubTask subtask) {

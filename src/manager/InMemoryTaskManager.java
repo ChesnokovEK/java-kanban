@@ -15,8 +15,14 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     public void createTask(Task task) {
-        task.setId(generateId());
+        if (idExists(task)) {
+            task.setId(generateId());
+        }
         tasks.put(task.getId(), new Task(task));
+    }
+
+    public boolean idExists(AbstractTask task) {
+        return tasks.containsKey(task.getId()) || subTasks.containsKey(task.getId()) || epics.containsKey(task.getId());
     }
 
     @Override
@@ -68,7 +74,9 @@ public class InMemoryTaskManager implements TaskManager {
         SubTask task = new SubTask(subTask);
 
         if (epic != null) {
-            task.setId(generateId());
+            if (idExists(task)) {
+                task.setId(generateId());
+            }
             subTask.setId(task.getId());
             subTasks.put(task.getId(), task);
             epic.addRelatedSubTask(task);
@@ -137,7 +145,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void createEpic(Epic epic) {
-        epic.setId(generateId());
+        if (idExists(epic)) {
+            epic.setId(generateId());
+        }
         epics.put(epic.getId(), new Epic(epic));
     }
 
@@ -213,8 +223,8 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    protected int generateId() {
-        return id++;
+    public int generateId() {
+        return ++id;
     }
 
 }

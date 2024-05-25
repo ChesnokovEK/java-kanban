@@ -22,8 +22,11 @@ public class Epic extends AbstractTask {
         setState();
     }
 
-    public Epic(int id, String title, String description) {
+    public Epic(int id, String title, String description, SubTask ... relatedSubTasks) {
         super(id, title, description);
+        for (SubTask task : relatedSubTasks) {
+            this.addRelatedSubTask(task);
+        }
         setState();
     }
 

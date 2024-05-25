@@ -28,7 +28,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     public SubTask createSubTask(Epic epic) {
-        SubTask subTask = new SubTask(generateId(), "Title", "Description", epic.getId());
+        SubTask subTask = new SubTask(generateId(), "Title", "Description", epic.getId(), State.NEW);
         epic.addRelatedSubTask(subTask);
         return subTask;
     }
@@ -93,7 +93,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldUpdateEpicStateFromSubTaskState() {
         Epic epic = new Epic("Epic-Title", "Description");
         manager.createEpic(epic);
-        SubTask subTask = new SubTask("SubTask-Title", "Description", epic.getId());
+        SubTask subTask = new SubTask(generateId(), "SubTask-Title", "Description", epic.getId(), State.NEW);
         manager.createSubTask(subTask);
         assertEquals(State.NEW, manager.getEpicById(epic.getId()).getState());
         subTask.setState(State.IN_PROGRESS);
@@ -321,7 +321,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = createEpic();
         manager.createEpic(epic);
         SubTask subtask1 = createSubTask(epic);
-        SubTask subtask2 = new SubTask(1, "Title", "Description", 1);
+        SubTask subtask2 = new SubTask(1, "Title", "Description", 1, State.NEW);
         manager.createSubTask(subtask1);
         manager.createSubTask(subtask2);
         assertEquals(1, manager.getAllSubTasks().size());
