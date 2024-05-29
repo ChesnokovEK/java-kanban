@@ -1,42 +1,41 @@
-import manager.Managers;
-import manager.TaskManager;
+import enums.State;
+import manager.FileBackedTasksManager;
 import tasks.*;
 
-import java.util.*;
+import java.io.File;
+import java.nio.file.Path;
+
+import static manager.FileBackedTasksManager.loadFromFile;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getInMemoryTaskManager();
+        Path path = Path.of("data.csv");
+        File file = new File(String.valueOf(path));
+        FileBackedTasksManager manager = new FileBackedTasksManager(file);
 
-        taskManager.createTask(new Task("Описание-1", "Task-1")); // id 0
-        taskManager.createTask(new Task("Описание-2", "Task-2")); // id 1
-        taskManager.createEpic(new Epic("Описание-1", "Epic-1")); // id 2
-        taskManager.createEpic(new Epic("Описание-1", "Epic-2")); // id 3
-        taskManager.createSubTask(new SubTask("Описание-1", "Subtask-1", 3)); // id 4
-        taskManager.createSubTask(new SubTask("Описание-2", "Subtask-2", 3)); // id 5
-        taskManager.createSubTask(new SubTask("Описание-3", "Subtask-3", 3)); // id 6
+        Task firstTask = new Task(0, "Task-1", "Task-1 Description", State.NEW);
+        manager.createTask(firstTask);
+        Task secondTask = new Task(0, "Task-2", "Task-2 Description", State.NEW);
+        manager.createTask(secondTask);
 
-        System.out.println("Обращаемся к таскам");
-        taskManager.getTaskById(0);
-        taskManager.getEpicById(2);
-        taskManager.getEpicById(2);
-        taskManager.getEpicById(2);
-        taskManager.getTaskById(0);
-        taskManager.getEpicById(3);
-        taskManager.getSubTaskById(4);
-        taskManager.getSubTaskById(4);
-        taskManager.getSubTaskById(5);
+        Epic firstEpic = new Epic(0,"Epic-1", "Epic-1 Description");
+        manager.createEpic(firstEpic);
+        SubTask firstSubtask = new SubTask(0, "SubTask-1 of Epic-1", "SubTask-1 Description", firstEpic.getId());
+        firstEpic.addRelatedSubTask(firstSubtask);
+        manager.createSubTask(firstSubtask);
 
-        System.out.println("Запрашиваем историю обращений");
-        List<AbstractTask> history = taskManager.getHistory();
-        System.out.println(history);
+        manager.getTaskById(firstTask.getId());
+        manager.getTaskById(secondTask.getId());
 
-        System.out.println("Удаляем таски с id 0, 3");
-        taskManager.removeTask(0);
-        taskManager.removeEpic(3);
-
-        System.out.println("Проверяем что история не отображает удаленные таски");
-        List<AbstractTask> historyAfterRemove = taskManager.getHistory();
-        System.out.println(historyAfterRemove);
+        System.out.println("Read from file");
+        manager = loadFromFile(file);
+        System.out.println("Tasks");
+        System.out.println(manager.getAllTasks());
+        System.out.println("Epics");
+        System.out.println(manager.getAllEpics());
+        System.out.println("SubTasks");
+        System.out.println(manager.getAllSubTasks());
+        System.out.println("History");
+        System.out.println(manager.getHistory());
     }
 }
