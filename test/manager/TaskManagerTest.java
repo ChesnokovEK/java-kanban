@@ -456,21 +456,27 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldCorrectlyCalculateHash() {
         Task firstTask = new Task("Title", "Description");
-        Task secondTask = new Task("Title", "Description");
+        Task secondTask = new Task(firstTask);
         Epic firstEpic = new Epic("Title", "Description");
-        Epic secondEpic = new Epic("Title", "Description");
+        Epic secondEpic = new Epic(firstEpic);
         SubTask firstSubTask = new SubTask("Title", "Description", firstEpic.getId());
-        SubTask secondSubTask = new SubTask("Title", "Description", firstEpic.getId());
+        SubTask secondSubTask = new SubTask(firstSubTask);
 
         assertEquals(firstTask.hashCode(), secondTask.hashCode());
+        System.out.println(firstTask.hashCode() + " " + secondTask.hashCode());
         assertEquals(firstEpic.hashCode(), secondEpic.hashCode());
+        System.out.println(firstEpic.hashCode() + " " + secondEpic.hashCode());
         assertEquals(firstSubTask.hashCode(), secondSubTask.hashCode());
+        System.out.println(firstSubTask.hashCode() + " " + secondSubTask.hashCode());
         firstEpic.addRelatedSubTask(firstSubTask);
         firstEpic.addRelatedSubTask(secondSubTask);
         secondTask.setStartTime(LocalDateTime.now().plusMinutes( 40L));
         secondSubTask.setDuration(Duration.ZERO.plusMinutes( 40L));
         assertNotEquals(firstTask.hashCode(), secondTask.hashCode());
+        System.out.println(firstTask.hashCode() + " " + secondTask.hashCode());
         assertNotEquals(firstSubTask.hashCode(), secondSubTask.hashCode());
+        System.out.println(firstEpic.hashCode() + " " + secondEpic.hashCode());
         assertNotEquals(firstEpic.hashCode(), secondEpic.hashCode());
+        System.out.println(firstSubTask.hashCode() + " " + secondSubTask.hashCode());
     }
 }
