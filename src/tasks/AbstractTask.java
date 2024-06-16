@@ -2,6 +2,8 @@ package tasks;
 
 import enums.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class AbstractTask implements Cloneable {
@@ -9,36 +11,57 @@ public abstract class AbstractTask implements Cloneable {
     private String title;
     private String description;
     private State state;
+    private Duration duration;
+    LocalDateTime startTime;
 
     public AbstractTask(Task task) {
         this.id = task.getId();
         this.title = task.getTitle();
         this.description = task.getDescription();
         this.state = task.getState();
+        this.startTime = task.getStartTime();
+        this.duration = task.getDuration();
     }
 
-    public AbstractTask(int id, String title, String description, State state) {
+    public AbstractTask(int id, String title, String description, State state, LocalDateTime startTime, long duration) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.state = state;
+        this.startTime = startTime;
+        this.duration = Duration.ofMinutes(duration);
+    }
+
+    public AbstractTask(int id, String title, String description, LocalDateTime startTime, long duration) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.state = State.NEW;
+        this.startTime = startTime;
+        this.duration = Duration.ofMinutes(duration);
     }
 
     public AbstractTask(int id, String title, String description) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.duration = Duration.ZERO;
+        this.startTime = LocalDateTime.now();
     }
 
     public AbstractTask(String title, String description, State state) {
         this.title = title;
         this.description = description;
         this.state = state;
+        this.duration = Duration.ZERO;
+        this.startTime = LocalDateTime.now();
     }
 
     public AbstractTask(String title, String description) {
         this.title = title;
         this.description = description;
+        this.duration = Duration.ZERO;
+        this.startTime = LocalDateTime.now();
     }
 
     public int getId() {
@@ -73,6 +96,26 @@ public abstract class AbstractTask implements Cloneable {
         this.state = state;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration.toMinutes());
+    }
+
     public abstract String toString();
 
     @Override
@@ -83,12 +126,14 @@ public abstract class AbstractTask implements Cloneable {
         return id == task.id
                 && Objects.equals(title, task.title)
                 && Objects.equals(description, task.description)
-                && state == task.state;
+                && state == task.state
+                && Objects.equals(startTime, task.startTime)
+                && Objects.equals(duration, task.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, state);
+        return Objects.hash(id, title, description, state, startTime.toString(), duration.toString());
     }
 
     @Override
