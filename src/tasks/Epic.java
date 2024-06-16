@@ -74,7 +74,7 @@ public class Epic extends AbstractTask {
 
         return System.lineSeparator() + "Epic {" + System.lineSeparator()
                 + "\tid='" + getId() + "'"
-                + System.lineSeparator()+"\ttitle='" + getTitle() + "'"
+                + System.lineSeparator() + "\ttitle='" + getTitle() + "'"
                 + ", " + System.lineSeparator() + "\tdescription='" + getDescription() + "'"
                 + ", " + System.lineSeparator() + "\tstate='" + getState() + "'"
                 + ", " + System.lineSeparator() + "\tstartTime='" + getStartTime() + "'"
