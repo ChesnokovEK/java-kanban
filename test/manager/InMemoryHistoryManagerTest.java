@@ -101,15 +101,15 @@ class InMemoryHistoryManagerTest {
             manager.add(task);
         }
 
-        //c. Удаление из истории: начало.
+        //c. РЈРґР°Р»РµРЅРёРµ РёР· РёСЃС‚РѕСЂРёРё: РЅР°С‡Р°Р»Рѕ.
         assertTrue(manager.getHistory().contains(tasks.get(FIRST_TASK_ID)));
         manager.remove(FIRST_TASK_ID);
         assertFalse(manager.getHistory().contains(tasks.get(FIRST_TASK_ID)));
-        //c. Удаление из истории: середина.
+        //c. РЈРґР°Р»РµРЅРёРµ РёР· РёСЃС‚РѕСЂРёРё: СЃРµСЂРµРґРёРЅР°.
         assertTrue(manager.getHistory().contains(tasks.get(TASK_ID_IN_THE_MIDDLE)));
         manager.remove(TASK_ID_IN_THE_MIDDLE);
         assertFalse(manager.getHistory().contains(tasks.get(TASK_ID_IN_THE_MIDDLE)));
-        //c. Удаление из истории: конец.
+        //c. РЈРґР°Р»РµРЅРёРµ РёР· РёСЃС‚РѕСЂРёРё: РєРѕРЅРµС†.
         assertTrue(manager.getHistory().contains(tasks.get(TASKS_LIST_SIZE-1)));
         manager.remove(TASKS_LIST_SIZE-1);
         assertFalse(manager.getHistory().contains(tasks.get(TASKS_LIST_SIZE-1)));
