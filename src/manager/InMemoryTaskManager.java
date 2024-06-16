@@ -278,7 +278,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addTaskToPrioritizedList(AbstractTask abstractTask) {
-        if(!isTaskOverlap(abstractTask)) {
+        if (!isTaskOverlap(abstractTask)) {
             prioritizedTasksSet.removeIf(task -> task.getId() == abstractTask.getId() & !task.equals(abstractTask));
             prioritizedTasksSet.add(abstractTask);
         }
