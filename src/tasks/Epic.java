@@ -129,6 +129,17 @@ public class Epic extends AbstractTask {
                 .reduce(0L, Long::sum));
 
         setDuration(totalDuration);
-        setEndTime(getStartTime().plusMinutes(totalDuration.toMinutes()));
+
+        LocalDateTime endTime = null;
+
+        for (SubTask subTask : relatedSubTasks) {
+            if (endTime == null) {
+                endTime = subTask.getEndTime();
+                continue;
+            }
+            endTime = subTask.getEndTime().isAfter(endTime) ? subTask.getEndTime() : endTime;
+        }
+
+        setEndTime(endTime);
     }
 }

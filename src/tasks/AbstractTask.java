@@ -12,7 +12,7 @@ public abstract class AbstractTask implements Cloneable {
     private String description;
     private State state;
     private Duration duration;
-    LocalDateTime startTime;
+    private LocalDateTime startTime;
 
     public AbstractTask(Task task) {
         this.id = task.getId();

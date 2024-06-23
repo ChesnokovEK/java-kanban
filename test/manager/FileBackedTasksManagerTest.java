@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     File file;
     Path path;
-    LocalDateTime localDateTime;
 
     @BeforeEach
     public void beforeEach() {
@@ -60,24 +59,6 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    public void shouldCorrectlyLoad() {
-        Task firstTask = new Task(generateId(), "Task Title", "Task Description", State.NEW);
-        manager.createTask(firstTask);
-        Task secondTask = new Task(generateId(), "Task Title", "Task Description", State.NEW);
-        manager.createTask(secondTask);
-        Epic epic = new Epic(generateId(), "Epic Title", "Epic Description", generateLocalDateTime(), 0);
-        manager.createEpic(epic);
-        SubTask subtask = new SubTask(generateId(), "SubTask Title", "SubTask Description", epic.getId(), generateLocalDateTime(), 0, State.NEW);
-        manager.createSubTask(subtask);
-        epic.addRelatedSubTask(subtask);
-
-        assertFalse(manager.getAllTasks().isEmpty());
-        assertEquals(List.of(firstTask, secondTask), manager.getAllTasks());
-        assertEquals(List.of(subtask), manager.getAllSubTasks());
-        assertEquals(List.of(epic), manager.getAllEpics());
-    }
-
-    @Test
     public void shouldSaveAndLoadEmptyTasksEpicsSubtasks() {
         FileBackedTasksManager.loadFromFile(file);
         assertEquals(Collections.EMPTY_LIST, manager.getAllTasks());
@@ -92,7 +73,57 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    public void shouldCorrectlyCreateTaskFromString() {
+    public void shouldCorrectlyLoadFromFile() {
+        FileBackedTasksManager emptyManager = new FileBackedTasksManager(file);
+        Task task = new Task(
+                0,
+                "Task-1",
+                "Task-1 Description",
+                State.NEW,
+                LocalDateTime.parse("2023-01-01T00:00"),
+                40
+        );
+        Epic epic = new Epic(
+                1,
+                "Epic-1",
+                "Epic-1 Description",
+                LocalDateTime.parse("2022-01-01T00:00"),
+                40
+        );
+        SubTask subTask = new SubTask(
+                2,
+                "SubTask-1",
+                "SubTask-1 Description",
+                1,
+                LocalDateTime.parse("2021-01-01T00:00"),
+                40,
+                State.NEW
+        );
+
+        epic.addRelatedSubTask(subTask);
+        emptyManager.createTask(task);
+        emptyManager.createEpic(epic);
+        emptyManager.createSubTask(subTask);
+
+        FileBackedTasksManager tempManager = FileBackedTasksManager.loadFromFile(file);
+
+        assertFalse(emptyManager.getAllTasks().isEmpty());
+        assertEquals(emptyManager.getAllTasks(), tempManager.getAllTasks());
+        assertFalse(emptyManager.getAllSubTasks().isEmpty());
+        assertEquals(emptyManager.getAllSubTasks(), tempManager.getAllSubTasks());
+        assertFalse(emptyManager.getAllEpics().isEmpty());
+        assertEquals(emptyManager.getAllEpics(), tempManager.getAllEpics());
+    }
+
+
+    @Test
+    public void shouldLoadFromString() {
+        final Path testPath = Path.of("testData.csv");
+        final File testFile = new File(String.valueOf(testPath));
+        final String taskString = "0,TASK,Task-1,NEW,Task-1 Description,2023-01-01T00:00,40,";
+        final String SubTaskString = "2,SUBTASK,SubTask-1,NEW,SubTask-1 Description,2021-01-01T00:00,40,1";
+        final String epicString = "1,EPIC,Epic-1,NEW,Epic-1 Description,2022-01-01T00:00,40,";
+
         Task task = new Task(
                 0,
                 "Task-1",
@@ -119,14 +150,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         );
         epic.addRelatedSubTask(subTask);
 
-        final String taskString = "0,TASK,Task-1,NEW,Task-1 Description,2023-01-01T00:00,40,";
-        final String SubTaskString = "2,SUBTASK,SubTask-1,NEW,SubTask-1 Description,2021-01-01T00:00,40,1";
-        final String epicString = "1,EPIC,Epic-1,NEW,Epic-1 Description,2022-01-01T00:00,40,";
-
-        Path tempPath = Path.of("tempData.csv");
-        File tempFile = new File(String.valueOf(tempPath));
-
-        try (FileWriter writer = new FileWriter(String.valueOf(tempFile))) {
+        try (FileWriter writer = new FileWriter(String.valueOf(testFile))) {
             writer.write(System.lineSeparator());
             writer.write(taskString + System.lineSeparator());
             writer.write(epicString + System.lineSeparator());
@@ -136,11 +160,11 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
             throw new ManagerSaveException("Не удалось сохранить в файл", e);
         }
 
-        manager = FileBackedTasksManager.loadFromFile(tempFile);
+        FileBackedTasksManager tempManager = FileBackedTasksManager.loadFromFile(testFile);
 
-        assertEquals(List.of(task), manager.getAllTasks());
-        assertEquals(List.of(subTask), manager.getAllSubTasks());
-        assertEquals(List.of(epic), manager.getAllEpics());
+        assertEquals(List.of(task), tempManager.getAllTasks());
+        assertEquals(List.of(subTask), tempManager.getAllSubTasks());
+        assertEquals(List.of(epic), tempManager.getAllEpics());
     }
 
     @Test
@@ -185,7 +209,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
         assertTrue(manager.getPrioritizedTasks().contains(task));
         assertTrue(manager.getPrioritizedTasks().contains(subTask));
-        assertTrue(manager.getPrioritizedTasks().contains(epic));
+        assertFalse(manager.getPrioritizedTasks().contains(epic));
         assertFalse(manager.getPrioritizedTasks().contains(overlapTask));
     }
 

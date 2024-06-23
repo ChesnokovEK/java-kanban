@@ -463,20 +463,61 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask secondSubTask = new SubTask(firstSubTask);
 
         assertEquals(firstTask.hashCode(), secondTask.hashCode());
-        System.out.println(firstTask.hashCode() + " " + secondTask.hashCode());
         assertEquals(firstEpic.hashCode(), secondEpic.hashCode());
-        System.out.println(firstEpic.hashCode() + " " + secondEpic.hashCode());
         assertEquals(firstSubTask.hashCode(), secondSubTask.hashCode());
-        System.out.println(firstSubTask.hashCode() + " " + secondSubTask.hashCode());
         firstEpic.addRelatedSubTask(firstSubTask);
         firstEpic.addRelatedSubTask(secondSubTask);
         secondTask.setStartTime(LocalDateTime.now().plusMinutes( 40L));
         secondSubTask.setDuration(Duration.ZERO.plusMinutes( 40L));
         assertNotEquals(firstTask.hashCode(), secondTask.hashCode());
-        System.out.println(firstTask.hashCode() + " " + secondTask.hashCode());
         assertNotEquals(firstSubTask.hashCode(), secondSubTask.hashCode());
-        System.out.println(firstEpic.hashCode() + " " + secondEpic.hashCode());
         assertNotEquals(firstEpic.hashCode(), secondEpic.hashCode());
-        System.out.println(firstSubTask.hashCode() + " " + secondSubTask.hashCode());
+    }
+
+    @Test
+    public void shouldCorrectlyCalculateEpicEndTimeAndDuration() {
+        Epic epic = new Epic(
+                0,
+                "Epic-1",
+                "Epic-1 Description",
+                LocalDateTime.parse("2022-01-01T00:00"),
+                40
+        );
+        SubTask subTask = new SubTask(
+                1,
+                "SubTask-1",
+                "SubTask-1 Description",
+                1,
+                LocalDateTime.parse("2021-01-01T00:00"),
+                40,
+                State.NEW
+        );
+        SubTask subTaskSecond = new SubTask(
+                2,
+                "SubTask-2",
+                "SubTask-2 Description",
+                1,
+                subTask.getEndTime(),
+                120,
+                State.NEW
+        );
+        SubTask subTaskThird = new SubTask(
+                3,
+                "SubTask-3",
+                "SubTask-3 Description",
+                1,
+                subTaskSecond.getEndTime(),
+                250,
+                State.NEW
+        );
+        epic.addRelatedSubTask(subTask);
+        epic.addRelatedSubTask(subTaskSecond);
+        epic.addRelatedSubTask(subTaskThird);
+        assertEquals(epic.getEndTime(), subTaskThird.getEndTime());
+        assertEquals(epic.getDuration(),
+                subTask.getDuration()
+                        .plus(subTaskSecond.getDuration())
+                        .plus(subTaskThird.getDuration())
+        );
     }
 }

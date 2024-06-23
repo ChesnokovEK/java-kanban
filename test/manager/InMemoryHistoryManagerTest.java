@@ -95,7 +95,7 @@ class InMemoryHistoryManagerTest {
         int FIRST_TASK_ID = 0;
         int TASK_ID_IN_THE_MIDDLE = TASKS_LIST_SIZE / 2;
 
-        for (int i = 0; i < TASKS_LIST_SIZE; i++) {
+        for (int i = FIRST_TASK_ID; i < TASKS_LIST_SIZE; i++) {
             Task task = new Task(i, "Description" + i, "Title", State.NEW);
             tasks.add(task);
             manager.add(task);
@@ -113,6 +113,37 @@ class InMemoryHistoryManagerTest {
         assertTrue(manager.getHistory().contains(tasks.get(TASKS_LIST_SIZE-1)));
         manager.remove(TASKS_LIST_SIZE-1);
         assertFalse(manager.getHistory().contains(tasks.get(TASKS_LIST_SIZE-1)));
+    }
+
+    @Test
+    public void shouldKeepOrderAfterTaskRemoval() {
+        List<AbstractTask> tasks = manager.getHistory();
+        int TASKS_LIST_SIZE = 5;
+        int FIRST_TASK_ID = 0;
+        int TASK_ID_IN_THE_MIDDLE = TASKS_LIST_SIZE / 2;
+
+        for (int i = FIRST_TASK_ID; i < TASKS_LIST_SIZE; i++) {
+            Task task = new Task(i, "Description" + i, "Title", State.NEW);
+            tasks.add(task);
+            manager.add(task);
+        }
+
+        List<AbstractTask> originalOrderedTasks = new ArrayList<>(tasks);
+
+        assertTrue(manager.getHistory().contains(tasks.get(TASK_ID_IN_THE_MIDDLE)));
+        manager.remove(TASK_ID_IN_THE_MIDDLE);
+        assertFalse(manager.getHistory().contains(tasks.get(TASK_ID_IN_THE_MIDDLE)));
+        tasks.remove(TASK_ID_IN_THE_MIDDLE);
+
+        for (AbstractTask task : originalOrderedTasks) {
+            if (FIRST_TASK_ID == TASK_ID_IN_THE_MIDDLE) {
+                continue;
+            }
+            assertEquals(task, tasks.get(FIRST_TASK_ID));
+            FIRST_TASK_ID++;
+        }
+
+        assertEquals(tasks, manager.getHistory());
     }
 
     @Test

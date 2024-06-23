@@ -6,16 +6,14 @@ import tasks.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String HEADER_CSV_FILE = "id,type,title,status,description,startTime,duration,epicId"
             + System.lineSeparator();
     private final File file;
-
-//    private static boolean isParsed = false;
 
     public FileBackedTasksManager(File fileName) {
         super();
@@ -50,22 +48,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    protected void save() {
-        try (FileWriter writer = new FileWriter(String.valueOf(file))) {
-            List<AbstractTask> tasks = new ArrayList<>();
-            tasks.addAll(getAllTasks());
-            tasks.addAll(getAllSubTasks());
-            tasks.addAll(getAllEpics());
-
-            writer.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
-
-            for (AbstractTask task : tasks) {
-                writer.write(toString(task));
+    public void save() {
+        try {
+            if (Files.exists(file.toPath())) {
+                Files.delete(file.toPath());
             }
+            Files.createFile(file.toPath());
+            try (FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
+                writer.write(HEADER_CSV_FILE);
 
-            writer.write("\n");
+                for (Task task : getAllTasks()) {
+                    writer.write(toString(task) + System.lineSeparator());
+                }
+
+                for (Epic epic : getAllEpics()) {
+                    writer.write(toString(epic) + System.lineSeparator());
+                }
+
+                for (SubTask subtask : getAllSubTasks()) {
+                    writer.write(toString(subtask) + System.lineSeparator());
+                }
+
+                writer.write(System.lineSeparator());
+            } catch (IOException e) {
+                throw new ManagerSaveException("Не удалось сохранить в файл", e);
+            }
         } catch (IOException e) {
-            throw new ManagerSaveException("Не удалось сохранить в файл", e);
+            throw new ManagerSaveException(e.getMessage());
         }
     }
 
