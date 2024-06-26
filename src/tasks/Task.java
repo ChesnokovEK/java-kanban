@@ -2,9 +2,11 @@ package tasks;
 
 import enums.*;
 
+import java.time.LocalDateTime;
+
 public class Task extends AbstractTask {
     public Task(Task task) {
-        super(task.getId(), task.getTitle(), task.getDescription(), task.getState());
+        super(task.getId(), task.getTitle(), task.getDescription(), task.getState(), task.getStartTime(), task.getDuration().toMinutes());
     }
 
     public Task(String title, String description) {
@@ -13,16 +15,23 @@ public class Task extends AbstractTask {
     }
 
     public Task(int id, String description, String title, State state) {
-        super(id, description, title, state);
+        super(id, description, title, state, LocalDateTime.now(), 0);
+    }
+
+    public Task(int id, String description, String title, State state, LocalDateTime dateTime, long duration) {
+        super(id, description, title, state, dateTime, duration);
     }
 
     @Override
     public String toString() {
-        return "\nTask {\n"
+        return System.lineSeparator() + "Task {" + System.lineSeparator()
                 + "\tid='" + getId() + "'"
-                + "\n\ttitle='" + getTitle() + "'"
-                + ", \n\tdescription='" + getDescription() + "'"
-                + ", \n\tstate='" + getState() + "'"
-                + "\n}";
+                + System.lineSeparator() + "\ttitle='" + getTitle() + "'"
+                + ", " + System.lineSeparator() + "\tdescription='" + getDescription() + "'"
+                + ", " + System.lineSeparator() + "\tstate='" + getState() + "'"
+                + ", " + System.lineSeparator() + "\tstartTime='" + getStartTime() + "'"
+                + ", " + System.lineSeparator() + "\tendTime='" + getEndTime() + "'"
+                + ", " + System.lineSeparator() + "\tduration='" + getDuration().toMinutes() + "'"
+                + System.lineSeparator() + "}";
     }
 }

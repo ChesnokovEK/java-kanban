@@ -2,13 +2,16 @@ package tasks;
 
 import enums.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SubTask extends AbstractTask {
     private int relatedEpicId;
 
     public SubTask(SubTask subTask) {
-        super(subTask.getId(), subTask.getTitle(), subTask.getDescription(), subTask.getState());
+        super(subTask.getId(), subTask.getTitle(), subTask.getDescription(),
+                subTask.getState(), subTask.getStartTime(), subTask.getDuration().toMinutes());
         this.relatedEpicId = subTask.getRelatedEpicId();
     }
 
@@ -16,16 +19,20 @@ public class SubTask extends AbstractTask {
         super(title, description);
         setRelatedEpicId(relatedEpicId);
         setState(State.NEW);
+        setDuration(Duration.ZERO);
+        setStartTime(LocalDateTime.now());
     }
 
     public SubTask(int id, String title, String description, int relatedEpicId) {
         super(id, title, description);
         setRelatedEpicId(relatedEpicId);
         setState(State.NEW);
+        setDuration(Duration.ZERO);
+        setStartTime(LocalDateTime.now());
     }
 
-    public SubTask(int id, String title, String description, int relatedEpicId, State state) {
-        super(id, title, description, state);
+    public SubTask(int id, String title, String description, int relatedEpicId, LocalDateTime dateTime, long duration, State state) {
+        super(id, title, description, state, dateTime, duration);
         setRelatedEpicId(relatedEpicId);
     }
 
@@ -49,13 +56,16 @@ public class SubTask extends AbstractTask {
 
     @Override
     public String toString() {
-        return "\nSubTask {\n"
+        return System.lineSeparator() + "SubTask {" + System.lineSeparator()
                 + "\tid='" + getId() + "'"
-                + "\n\ttitle='" + getTitle() + "'"
-                + ", \n\tdescription='" + getDescription() + "'"
-                + ", \n\tstate='" + getState() + "'"
-                + ", \n\trelatedEpicId='" + getRelatedEpicId() + "'"
-                + "\n}";
+                + System.lineSeparator() + "\ttitle='" + getTitle() + "'"
+                + ", " + System.lineSeparator() + "\tdescription='" + getDescription() + "'"
+                + ", " + System.lineSeparator() + "\tstate='" + getState() + "'"
+                + ", " + System.lineSeparator() + "\trelatedEpicId='" + getRelatedEpicId() + "'"
+                + ", " + System.lineSeparator() + "\tstartTime='" + getStartTime() + "'"
+                + ", " + System.lineSeparator() + "\tendTime='" + getEndTime() + "'"
+                + ", " + System.lineSeparator() + "\tduration='" + getDuration().toMinutes() + "'"
+                + System.lineSeparator() + "}";
     }
 
     protected void setRelatedEpicId(int relatedEpicId) {

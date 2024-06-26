@@ -1,43 +1,45 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import enums.*;
 
 public class Epic extends AbstractTask {
+    private LocalDateTime endTime;
     private Map<Integer, SubTask> relatedSubTasks = new LinkedHashMap<>();
 
     public Epic(Epic epic) {
-        super(epic.getId(), epic.getTitle(), epic.getDescription());
-
-        for (SubTask subTask : epic.getAllRelatedSubTasks()) {
-            addRelatedSubTask(subTask);
-        }
-
+        super(epic.getId(), epic.getTitle(), epic.getDescription(), epic.getStartTime(), epic.getDuration().toMinutes());
+        epic.getAllRelatedSubTasks().stream().forEach(this::addRelatedSubTask);
         setState();
+        calculateDurationAndEndTime(epic.getAllRelatedSubTasks());
     }
 
     public Epic(String title, String description) {
         super(title, description);
         setState();
+        calculateDurationAndEndTime(getAllRelatedSubTasks());
     }
 
-    public Epic(int id, String title, String description, SubTask... relatedSubTasks) {
-        super(id, title, description);
-        for (SubTask task : relatedSubTasks) {
-            this.addRelatedSubTask(task);
-        }
+    public Epic(int id, String title, String description, LocalDateTime dateTime, long duration, SubTask... relatedSubTasks) {
+        super(id, title, description, dateTime, duration);
+        Arrays.stream(relatedSubTasks).forEach(this::addRelatedSubTask);
         setState();
+        calculateDurationAndEndTime(getAllRelatedSubTasks());
     }
 
     public void addRelatedSubTask(SubTask subTask) {
         relatedSubTasks.put(subTask.getId(), new SubTask(subTask));
         setState();
+        calculateDurationAndEndTime(getAllRelatedSubTasks());
     }
 
     public void removeRelatedSubTaskById(int subTaskId) {
         relatedSubTasks.remove(subTaskId);
         setState();
+        calculateDurationAndEndTime(getAllRelatedSubTasks());
     }
 
     public List<SubTask> getAllRelatedSubTasks() {
@@ -47,6 +49,7 @@ public class Epic extends AbstractTask {
     public void removeAllRelatedSubTasks() {
         relatedSubTasks.clear();
         setState();
+        calculateDurationAndEndTime(getAllRelatedSubTasks());
     }
 
     @Override
@@ -67,11 +70,22 @@ public class Epic extends AbstractTask {
     public String toString() {
         List<Integer> subTasksId = new ArrayList<>();
 
-        for (SubTask subTask : getAllRelatedSubTasks()) {
-            subTasksId.add(subTask.getId());
-        }
+        getAllRelatedSubTasks().stream().forEach(subTask -> subTasksId.add(subTask.getId()));
 
-        return "\nEpic {\n" + "\tid='" + getId() + "'" + "\n\ttitle='" + getTitle() + "'" + ", \n\tdescription='" + getDescription() + "'" + ", \n\tstate='" + getState() + "'" + ", \n\trelatedSubTasksId=" + subTasksId + "\n}";
+        return System.lineSeparator() + "Epic {" + System.lineSeparator()
+                + "\tid='" + getId() + "'"
+                + System.lineSeparator() + "\ttitle='" + getTitle() + "'"
+                + ", " + System.lineSeparator() + "\tdescription='" + getDescription() + "'"
+                + ", " + System.lineSeparator() + "\tstate='" + getState() + "'"
+                + ", " + System.lineSeparator() + "\tstartTime='" + getStartTime() + "'"
+                + ", " + System.lineSeparator() + "\tendTime='" + getEndTime() + "'"
+                + ", " + System.lineSeparator() + "\tduration='" + getDuration().toMinutes() + "'"
+                + ", " + System.lineSeparator() + "\trelatedSubTasksId=" + subTasksId + System.lineSeparator() + "}";
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     protected void setRelatedSubTasks(Map<Integer, SubTask> relatedSubTasks) {
@@ -82,6 +96,10 @@ public class Epic extends AbstractTask {
         calculateState(getAllRelatedSubTasks());
     }
 
+    protected void setEndTime(LocalDateTime localDateTime) {
+        this.endTime = localDateTime;
+    }
+
     private void calculateState(List<SubTask> relatedSubTasks) {
         if (relatedSubTasks.isEmpty()) {
             setState(State.NEW);
@@ -90,9 +108,7 @@ public class Epic extends AbstractTask {
 
         List<State> statesOfSubTasks = new ArrayList<>();
 
-        for (SubTask subTask : relatedSubTasks) {
-            statesOfSubTasks.add(subTask.getState());
-        }
+        relatedSubTasks.stream().forEach(subTask -> statesOfSubTasks.add(subTask.getState()));
 
         if (statesOfSubTasks.stream().distinct().toList().size() > 1) {
             setState(State.IN_PROGRESS);
@@ -100,5 +116,30 @@ public class Epic extends AbstractTask {
         }
 
         setState(statesOfSubTasks.stream().distinct().toList().get(0));
+    }
+
+    private void calculateDurationAndEndTime(List<SubTask> relatedSubTasks) {
+        if (relatedSubTasks.isEmpty()) {
+            setEndTime(getStartTime());
+            return;
+        }
+
+        Duration totalDuration = Duration.ofMinutes(relatedSubTasks.stream()
+                .map(subTask -> subTask.getDuration().toMinutes())
+                .reduce(0L, Long::sum));
+
+        setDuration(totalDuration);
+
+        LocalDateTime endTime = null;
+
+        for (SubTask subTask : relatedSubTasks) {
+            if (endTime == null) {
+                endTime = subTask.getEndTime();
+                continue;
+            }
+            endTime = subTask.getEndTime().isAfter(endTime) ? subTask.getEndTime() : endTime;
+        }
+
+        setEndTime(endTime);
     }
 }
