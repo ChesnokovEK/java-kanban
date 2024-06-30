@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import enums.HttpMethodTypes;
 import exceptions.InputParsingException;
 import exceptions.NotFoundException;
 import exceptions.OverlapException;
@@ -25,8 +26,8 @@ public class SubTasksHandler extends BaseHttpHandler {
 
     @Override
     public boolean processRequest(HttpExchange httpExchange, String path, String requestMethod) throws IOException {
-        switch (requestMethod) {
-            case "GET":
+        switch (HttpMethodTypes.valueOf(requestMethod)) {
+            case GET:
                 if (SUBTASKS_PATTERN.matcher(path).matches()) {
                     getSubtasks(httpExchange);
                     return true;
@@ -37,7 +38,7 @@ public class SubTasksHandler extends BaseHttpHandler {
                 }
                 break;
 
-            case "POST":
+            case POST:
                 if (SUBTASKS_PATTERN.matcher(path).matches()) {
                     SubTask subtask = parseSubtask(getRequestBodyText(httpExchange));
                     editSubtask(httpExchange, subtask);
@@ -45,7 +46,7 @@ public class SubTasksHandler extends BaseHttpHandler {
                 }
                 break;
 
-            case "DELETE":
+            case DELETE:
                 if (SUBTASKS_ID_PATTERN.matcher(path).matches()) {
                     String pathId = path.substring("/subtasks/".length());
                     deleteSubtask(httpExchange, parseInt(pathId));
