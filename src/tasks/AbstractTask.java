@@ -11,8 +11,8 @@ public abstract class AbstractTask implements Cloneable {
     private String title;
     private String description;
     private State state;
-    private Duration duration;
     private LocalDateTime startTime;
+    private Duration duration;
 
     public AbstractTask(Task task) {
         this.id = task.getId();

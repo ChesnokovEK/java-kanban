@@ -1,6 +1,7 @@
 package manager;
 
 import enums.State;
+import exceptions.ManagerSaveException;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
@@ -50,7 +51,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         manager.createTask(secondTask);
         Epic epic = new Epic(generateId(), "Epic Title", "Epic Description", generateLocalDateTime(), 0);
         manager.createEpic(epic);
-        SubTask subtask = new SubTask(generateId(), "SubTask Title", "SubTask Description", epic.getId(), generateLocalDateTime(), 0, State.NEW);
+        SubTask subtask = new SubTask(generateId(), "SubTask Title", "SubTask Description", State.NEW, generateLocalDateTime(), 0, epic.getId());
         manager.createSubTask(subtask);
         epic.addRelatedSubTask(subtask);
         assertEquals(List.of(firstTask, secondTask), manager.getAllTasks());
@@ -94,10 +95,10 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 2,
                 "SubTask-1",
                 "SubTask-1 Description",
-                1,
+                State.NEW,
                 LocalDateTime.parse("2021-01-01T00:00"),
                 40,
-                State.NEW
+                1
         );
 
         epic.addRelatedSubTask(subTask);
@@ -143,10 +144,10 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 2,
                 "SubTask-1",
                 "SubTask-1 Description",
-                1,
+                State.NEW,
                 LocalDateTime.parse("2021-01-01T00:00"),
                 40,
-                State.NEW
+                1
         );
         epic.addRelatedSubTask(subTask);
 
@@ -196,10 +197,10 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 2,
                 "SubTask-1",
                 "SubTask-1 Description",
-                1,
+                State.NEW,
                 LocalDateTime.parse("2018-01-01T00:00"),
                 40,
-                State.NEW
+                1
         );
         epic.addRelatedSubTask(subTask);
         manager.createTask(task);

@@ -34,7 +34,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     public SubTask createSubTask(Epic epic) {
-        SubTask subTask = new SubTask(generateId(), "Title", "Description", epic.getId(), generateLocalDateTime(), 0, State.NEW);
+        SubTask subTask = new SubTask(
+                generateId(),
+                "Title",
+                "Description",
+                State.NEW,
+                generateLocalDateTime(),
+                0,
+                epic.getId()
+        );
         epic.addRelatedSubTask(subTask);
         return subTask;
     }
@@ -110,8 +118,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = new Epic("Epic-Title", "Description");
         manager.createEpic(epic);
         // a. Все подзадачи со статусом NEW.
-        SubTask firstSubTask = new SubTask(generateId(), "SubTask-Title", "Description", epic.getId(), generateLocalDateTime(), 0,  State.NEW);
-        SubTask secondSubTask = new SubTask(generateId(), "SubTask-Title", "Description", epic.getId(), generateLocalDateTime(), 0,  State.NEW);
+        SubTask firstSubTask = new SubTask(generateId(), "SubTask-Title", "Description", State.NEW, generateLocalDateTime(), 0, epic.getId());
+        SubTask secondSubTask = new SubTask(generateId(), "SubTask-Title", "Description", State.NEW, generateLocalDateTime(), 0, epic.getId());
         manager.createSubTask(firstSubTask);
         manager.createSubTask(secondSubTask);
         assertEquals(State.NEW, manager.getEpicById(epic.getId()).getState());
@@ -350,7 +358,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = createEpic();
         manager.createEpic(epic);
         SubTask subtask1 = createSubTask(epic);
-        SubTask subtask2 = new SubTask(1, "Title", "Description", 1, generateLocalDateTime(), 0, State.NEW);
+        SubTask subtask2 = new SubTask(1, "Title", "Description", State.NEW, generateLocalDateTime(), 0, 1);
         manager.createSubTask(subtask1);
         manager.createSubTask(subtask2);
         assertEquals(1, manager.getAllSubTasks().size());
@@ -382,19 +390,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 1000,
                 "Subtask-1 Title",
                 "Description",
-                999,
+                State.NEW,
                 LocalDateTime.now().plusMinutes(20),
                 1,
-                State.NEW
+                999
         );
         SubTask secondSubTask = new SubTask(
                 1001,
                 "Subtask-1 Title",
                 "Description",
-                999,
+                State.NEW,
                 LocalDateTime.now().plusMinutes(10),
                 1,
-                State.NEW
+                999
         );
         manager.createEpic(epic);
         manager.createSubTask(firstSubTask);
@@ -423,7 +431,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(System.lineSeparator() + "Task {" + System.lineSeparator()
                 + "\tid='" + task.getId() + "'"
-                + System.lineSeparator() + "\ttitle='" + task.getTitle() + "'"
+                + ", " + System.lineSeparator() + "\ttitle='" + task.getTitle() + "'"
                 + ", " + System.lineSeparator() + "\tdescription='" + task.getDescription() + "'"
                 + ", " + System.lineSeparator() + "\tstate='" + task.getState() + "'"
                 + ", " + System.lineSeparator() + "\tstartTime='" + task.getStartTime() + "'"
@@ -487,28 +495,28 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 1,
                 "SubTask-1",
                 "SubTask-1 Description",
-                1,
+                State.NEW,
                 LocalDateTime.parse("2021-01-01T00:00"),
                 40,
-                State.NEW
+                1
         );
         SubTask subTaskSecond = new SubTask(
                 2,
                 "SubTask-2",
                 "SubTask-2 Description",
-                1,
+                State.NEW,
                 subTask.getEndTime(),
                 120,
-                State.NEW
+                1
         );
         SubTask subTaskThird = new SubTask(
                 3,
                 "SubTask-3",
                 "SubTask-3 Description",
-                1,
+                State.NEW,
                 subTaskSecond.getEndTime(),
                 250,
-                State.NEW
+                1
         );
         epic.addRelatedSubTask(subTask);
         epic.addRelatedSubTask(subTaskSecond);

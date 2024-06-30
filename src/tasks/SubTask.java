@@ -31,7 +31,7 @@ public class SubTask extends AbstractTask {
         setStartTime(LocalDateTime.now());
     }
 
-    public SubTask(int id, String title, String description, int relatedEpicId, LocalDateTime dateTime, long duration, State state) {
+    public SubTask(int id, String title, String description, State state, LocalDateTime dateTime, long duration, int relatedEpicId) {
         super(id, title, description, state, dateTime, duration);
         setRelatedEpicId(relatedEpicId);
     }
