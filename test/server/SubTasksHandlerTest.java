@@ -8,7 +8,6 @@ import manager.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -29,12 +28,14 @@ class SubTasksHandlerTest {
     private TaskManager manager;
     private HttpTaskServer taskServer;
     private final Gson gson = HttpTaskServer.getGson();
+    private HttpClient client;
 
     @BeforeEach
     public void setUp() throws IOException {
         manager = Managers.getInMemoryTaskManager();
         taskServer = new HttpTaskServer(manager, gson);
         taskServer.start();
+        client = HttpClient.newHttpClient();
     }
 
     @AfterEach
@@ -65,7 +66,6 @@ class SubTasksHandlerTest {
         manager.createSubTask(subTask);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
@@ -102,7 +102,6 @@ class SubTasksHandlerTest {
         manager.createSubTask(expectedSubTask);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/" + expectedSubTask.getId());
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
@@ -139,7 +138,6 @@ class SubTasksHandlerTest {
         String subTaskJson = gson.toJson(subTask);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(subTaskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -177,7 +175,6 @@ class SubTasksHandlerTest {
         String subtaskJson = gson.toJson(expectedSubTask);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(subtaskJson)).build();
 
@@ -212,7 +209,6 @@ class SubTasksHandlerTest {
         manager.createSubTask(subTask);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/" + subTask.getId());
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
 

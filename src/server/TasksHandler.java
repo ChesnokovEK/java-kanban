@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import exceptions.InputParsingException;
 import exceptions.NotFoundException;
+import exceptions.OverlapException;
 import manager.TaskManager;
 import tasks.Task;
 
@@ -79,6 +80,9 @@ public class TasksHandler extends BaseHttpHandler {
         if (taskManager.getTaskById(task.getId()) == null) {
             taskManager.createTask(task);
             task = (new LinkedList<>(taskManager.getAllTasks())).getLast();
+            if (!taskManager.getPrioritizedTasks().contains(task)) {
+                throw new OverlapException(String.format("Задача #%d пересекается с другими", task.getId()));
+            }
         } else {
             taskManager.updateTask(task);
         }

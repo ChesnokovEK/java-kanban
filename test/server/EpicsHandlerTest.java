@@ -27,12 +27,14 @@ class EpicsHandlerTest {
     private TaskManager manager;
     private HttpTaskServer taskServer;
     private final Gson gson = HttpTaskServer.getGson();
+    private HttpClient client;
 
     @BeforeEach
     public void setUp() throws IOException {
         manager = Managers.getInMemoryTaskManager();
         taskServer = new HttpTaskServer(manager, gson);
         taskServer.start();
+        client = HttpClient.newHttpClient();
     }
 
     @AfterEach
@@ -46,7 +48,6 @@ class EpicsHandlerTest {
         manager.createEpic(new Epic("Epic 1", "Description of Epic 1"));
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
@@ -78,7 +79,6 @@ class EpicsHandlerTest {
         );
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId() + "/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
@@ -106,7 +106,6 @@ class EpicsHandlerTest {
 
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + expectedEpic.getId());
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
@@ -132,7 +131,6 @@ class EpicsHandlerTest {
         String epicJson = gson.toJson(epic);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(epicJson)).build();
 
@@ -161,7 +159,6 @@ class EpicsHandlerTest {
         String epicJson = gson.toJson(expectedEpic);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(epicJson)).build();
 
@@ -186,7 +183,6 @@ class EpicsHandlerTest {
         manager.createEpic(epic);
 
         // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
 

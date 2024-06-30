@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import enums.HttpMethodTypes;
 import exceptions.InputParsingException;
 import exceptions.NotFoundException;
 import manager.TaskManager;
@@ -27,12 +28,9 @@ public class EpicsHandler extends BaseHttpHandler {
 
     @Override
     public boolean processRequest(HttpExchange httpExchange, String path, String requestMethod) throws IOException {
-        switch (requestMethod) {
-            case "GET":
-                if (EPICS_PATTERN.matcher(path).matches()) {
-                    getEpics(httpExchange);
-                    return true;
-                } else if (EPICS_ID_PATTERN.matcher(path).matches()) {
+        switch (HttpMethodTypes.valueOf(requestMethod)) {
+            case GET:
+                if (EPICS_ID_PATTERN.matcher(path).matches()) {
                     String pathId = path.substring("/epics/".length());
                     findEpic(httpExchange, parseInt(pathId));
                     return true;
@@ -42,9 +40,10 @@ public class EpicsHandler extends BaseHttpHandler {
                     getEpicSubtasks(httpExchange, parseInt(pathId));
                     return true;
                 }
-                break;
+                getEpics(httpExchange);
+                return true;
 
-            case "POST":
+            case POST:
                 if (EPICS_PATTERN.matcher(path).matches()) {
                     Epic epic = parseEpic(getRequestBodyText(httpExchange));
                     editTask(httpExchange, epic);
@@ -52,7 +51,7 @@ public class EpicsHandler extends BaseHttpHandler {
                 }
                 break;
 
-            case "DELETE":
+            case DELETE:
                 if (EPICS_ID_PATTERN.matcher(path).matches()) {
                     String pathId = path.substring("/epics/".length());
                     deleteEpic(httpExchange, parseInt(pathId));
@@ -84,7 +83,9 @@ public class EpicsHandler extends BaseHttpHandler {
     }
 
     private void getEpicSubtasks(HttpExchange httpExchange, int id) throws IOException {
-        Collection<SubTask> subtasks = taskManager.getEpicById(id).getAllRelatedSubTasks();
+        Optional<Epic> epicOpt = Optional.ofNullable(taskManager.getEpicById(id));
+        Epic epic = epicOpt.orElseThrow(() -> new NotFoundException("Эпик #" + id + " не найден"));
+        Collection<SubTask> subtasks = epic.getAllRelatedSubTasks();
         sendJson(httpExchange, 200, gson.toJson(subtasks));
     }
 
