@@ -14,19 +14,19 @@ public class Task extends AbstractTask {
         setState(State.NEW);
     }
 
-    public Task(int id, String description, String title, State state) {
-        super(id, description, title, state, LocalDateTime.now(), 0);
+    public Task(int id, String title, String description, State state) {
+        super(id, title, description, state, LocalDateTime.now(), 0);
     }
 
-    public Task(int id, String description, String title, State state, LocalDateTime dateTime, long duration) {
-        super(id, description, title, state, dateTime, duration);
+    public Task(int id, String title, String description, State state, LocalDateTime dateTime, long duration) {
+        super(id, title, description, state, dateTime, duration);
     }
 
     @Override
     public String toString() {
         return System.lineSeparator() + "Task {" + System.lineSeparator()
                 + "\tid='" + getId() + "'"
-                + System.lineSeparator() + "\ttitle='" + getTitle() + "'"
+                + ", " + System.lineSeparator() + "\ttitle='" + getTitle() + "'"
                 + ", " + System.lineSeparator() + "\tdescription='" + getDescription() + "'"
                 + ", " + System.lineSeparator() + "\tstate='" + getState() + "'"
                 + ", " + System.lineSeparator() + "\tstartTime='" + getStartTime() + "'"

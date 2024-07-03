@@ -2,6 +2,7 @@ package manager;
 
 import enums.State;
 import enums.TaskType;
+import exceptions.ManagerSaveException;
 import tasks.*;
 
 import java.io.*;
@@ -112,11 +113,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 );
             }
             case "SUBTASK" -> {
-                return new SubTask(Integer.parseInt(params[0]),
-                        params[2], params[4], Integer.parseInt(params[7]),
-                        LocalDateTime.parse(params[5]), Integer.parseInt(params[6]),
-                        State.valueOf(params[3].toUpperCase())
-                );
+                return new SubTask(Integer.parseInt(params[0]), params[2], params[4],
+                        State.valueOf(params[3].toUpperCase()), LocalDateTime.parse(params[5]),
+                        Integer.parseInt(params[6]), Integer.parseInt(params[7]));
             }
             default -> {
                 return new Task(Integer.parseInt(params[0]), params[2], params[4],
